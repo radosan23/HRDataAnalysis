@@ -28,8 +28,13 @@ def main():
 
     a_office.index = 'A' + a_office['employee_office_id'].astype(str).values
     b_office.index = 'B' + b_office['employee_office_id'].astype(str).values
-    hr_data = hr_data.set_index('employee_id', drop=False)
-    print(a_office.index.tolist(), b_office.index.tolist(), hr_data.index.tolist(), sep='\n')
+    hr_data = hr_data.set_index('employee_id')
+
+    df = pd.concat([a_office, b_office])
+    df = df.merge(hr_data, how='inner', left_index=True, right_index=True, sort=True)
+    df.drop('employee_office_id', axis=1, inplace=True)
+
+    print(df.index.tolist(), df.columns.tolist(), sep='\n')
 
 
 if __name__ == '__main__':

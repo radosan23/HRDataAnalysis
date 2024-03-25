@@ -34,7 +34,9 @@ def main():
     df = df.merge(hr_data, how='inner', left_index=True, right_index=True, sort=True)
     df.drop('employee_office_id', axis=1, inplace=True)
 
-    print(df.index.tolist(), df.columns.tolist(), sep='\n')
+    print(df.sort_values('average_monthly_hours', ascending=False)['Department'][:10].tolist())
+    print(df.query("Department == 'IT' & salary == 'low'")['number_project'].sum())
+    print(df.loc[['A4', 'B7064', 'A3033'], ['last_evaluation', 'satisfaction_level']].values.tolist())
 
 
 if __name__ == '__main__':

@@ -20,6 +20,20 @@ def get_data():
         open('../Data/hr_data.xml', 'wb').write(r.content)
 
 
+def stage_1(df):
+    print(df.sort_values('average_monthly_hours', ascending=False)['Department'][:10].tolist())
+    print(df.query("Department == 'IT' & salary == 'low'")['number_project'].sum())
+    print(df.loc[['A4', 'B7064', 'A3033'], ['last_evaluation', 'satisfaction_level']].values.tolist())
+
+
+def stage_2(df):
+    result = df.groupby(['left']).agg({'number_project': ['median', lambda x: (x > 5).sum()],
+                                       'time_spend_company': ['mean', 'median'],
+                                       'Work_accident': ['mean'],
+                                       'last_evaluation': ['mean', 'std']}).round(2)
+    print(result.rename(columns={'<lambda_0>': 'count_bigger_5'}).to_dict())
+
+
 def main():
     get_data()
     a_office = pd.read_xml('../Data/A_office_data.xml')
@@ -34,9 +48,7 @@ def main():
     df = df.merge(hr_data, how='inner', left_index=True, right_index=True, sort=True)
     df.drop('employee_office_id', axis=1, inplace=True)
 
-    print(df.sort_values('average_monthly_hours', ascending=False)['Department'][:10].tolist())
-    print(df.query("Department == 'IT' & salary == 'low'")['number_project'].sum())
-    print(df.loc[['A4', 'B7064', 'A3033'], ['last_evaluation', 'satisfaction_level']].values.tolist())
+    stage_2(df)
 
 
 if __name__ == '__main__':
